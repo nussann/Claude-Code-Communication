@@ -2,6 +2,22 @@
 
 Claude Code多エージェント協調フレームワーク - 役割分担による効率的なプロジェクト開発環境
 
+## 🚀 クイックスタート
+
+```bash
+# 1. 環境設定
+cp .env.example .env
+# .envファイルを編集してAPI Keyを設定
+
+# 2. システム起動（Discord Bot統合）
+./system/setup.sh
+
+# 3. Discord操作
+# Discordで「!cc cchelp」または直接メッセージ送信
+```
+
+**詳細なセットアップ手順**: [SETUP_README.md](./SETUP_README.md)
+
 ## 🎯 システム概要
 
 GM → TL → STs の階層型役割管理システムで、複数のClaude Codeインスタンスが協調してプロジェクト開発を行います
@@ -172,7 +188,7 @@ rm -f ./tmp/st*_done.txt
 
 # 作成後のプロジェクトアクセス
 cd GM/project/web-app-project    # GMとして作業
-cd TL/project/web-app-project    # TLとして作業  
+cd TL/project/web-app-project    # TLとして作業
 cd ST/project/web-app-project    # STとして作業
 ```
 
@@ -227,6 +243,31 @@ Claude-Code-Communication/
 1. **テスト・開発**: `*/project/` 内で自由に実験
 2. **本格運用**: `shared-projects/` に正式プロジェクト作成
 3. **Git管理**: 必要なもののみコミット・プッシュ
+
+---
+
+## 📱 Discord通知システム
+
+Claude Codeの作業完了をDiscordに自動通知するシステムを統合しています。
+
+### 🚀 クイック使用
+
+```bash
+# Discord通知ディレクトリに移動
+cd discord-notifications
+
+# 環境設定（初回のみ）
+# .envファイルにDiscord Webhook URLを設定
+
+# 仮想環境の有効化
+source venv/bin/activate
+
+# テスト送信
+python cli.py "🎉 Claude-Code-Communicationが稼働中です！"
+```
+
+### 📋 詳細ドキュメント
+詳しい使用方法は [`discord-notifications/README.md`](discord-notifications/README.md) をご覧ください。
 
 ---
 

@@ -50,10 +50,10 @@ PANE_TITLES=("TL" "ST" "ST" "ST")
 
 for i in {0..3}; do
     tmux select-pane -t "team:0.$i" -T "${PANE_TITLES[$i]}"
-    
+
     # 作業ディレクトリ設定
     tmux send-keys -t "team:0.$i" "cd $(pwd)" C-m
-    
+
     # カラープロンプト設定
     if [ $i -eq 0 ]; then
         # TL: 赤色
@@ -62,7 +62,7 @@ for i in {0..3}; do
         # STs: 青色
         tmux send-keys -t "team:0.$i" "export PS1='(\[\033[1;34m\]${PANE_TITLES[$i]}\[\033[0m\]) \[\033[1;32m\]\w\[\033[0m\]\$ '" C-m
     fi
-    
+
     # ウェルカムメッセージ
     tmux send-keys -t "team:0.$i" "echo '=== ${PANE_TITLES[$i]} エージェント ==='" C-m
 done
@@ -126,4 +126,50 @@ echo "     boss1: instructions/boss.md"
 echo "     worker1,2,3: instructions/worker.md"
 echo "     システム構造: CLAUDE.md"
 echo ""
-echo "  4. 🎯 デモ実行: GMに「あなたはgmです。指示書に従って」と入力" 
+echo "  4. 🎯 デモ実行: GMに「あなたはgmです。指示書に従って」と入力"
+echo ""
+echo "  5. 🤖 Discord Bot:"
+echo "     自動起動済み - Discord経由でリモート操作可能"
+
+# STEP 5: Discord Bot自動起動
+log_info "🤖 Discord Bot自動起動中..."
+
+# Discord Bot管理スクリプトを使用（相対パス）
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DISCORD_MANAGER="$SCRIPT_DIR/discord_bot_manager.sh"
+
+if [ -f "$DISCORD_MANAGER" ]; then
+    # まず仮想環境セットアップを実行
+    log_info "Discord Bot環境確認中..."
+    "$DISCORD_MANAGER" setup
+
+    if [ $? -eq 0 ]; then
+        # セットアップ成功後、起動
+        "$DISCORD_MANAGER" start
+        if [ $? -eq 0 ]; then
+            log_success "✅ Discord Bot起動完了"
+            echo "    📱 Discordからの操作が可能です"
+            echo "    💬 自動転送機能: 有効"
+            echo "    🔧 コマンド: !cc cchelp でヘルプ表示"
+        else
+            log_info "⚠️ Discord Bot起動に失敗しました"
+        fi
+    else
+        log_info "⚠️ Discord Bot環境セットアップに失敗しました"
+    fi
+else
+    log_info "⚠️ Discord Bot管理スクリプトが見つかりません ($DISCORD_MANAGER)"
+fi
+
+echo ""
+log_success "🎉 完全統合セットアップ完了！"
+echo ""
+echo "📱 Discord統合機能:"
+echo "  ✅ 自動転送: Discordメッセージ → Claude Code"
+echo "  🔄 応答監視: Claude Code → Discord (要: !cc monitor start)"
+echo "  🎮 リモート操作: Discord経由でシステム制御"
+echo ""
+echo "🔧 Discord Bot管理:"
+echo "  起動: ./system/discord_bot_manager.sh start"
+echo "  停止: ./system/discord_bot_manager.sh stop"
+echo "  状態: ./system/discord_bot_manager.sh status"

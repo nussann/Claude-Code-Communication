@@ -25,7 +25,7 @@ show_usage() {
 
 利用可能エージェント:
   gm  - ジェネラルマネージャー
-  tl  - チームリーダー  
+  tl  - チームリーダー
   st  - スタッフ（デフォルト：ペイン1）
   st1 - スタッフ（ペイン1）
   st2 - スタッフ（ペイン2）
@@ -46,7 +46,7 @@ show_agents() {
     echo "  tl  → team:0.0    (チームリーダー)"
     echo "  st  → team:0.1    (スタッフ・デフォルト)"
     echo "  st1 → team:0.1    (スタッフ・ペイン1)"
-    echo "  st2 → team:0.2    (スタッフ・ペイン2)" 
+    echo "  st2 → team:0.2    (スタッフ・ペイン2)"
     echo "  st3 → team:0.3    (スタッフ・ペイン3)"
 }
 
@@ -55,26 +55,29 @@ log_send() {
     local agent="$1"
     local message="$2"
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-    
-    mkdir -p logs
-    echo "[$timestamp] $agent: SENT - \"$message\"" >> logs/send_log.txt
+
+    # スクリプトのディレクトリを基準にログディレクトリ作成
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    LOG_DIR="$SCRIPT_DIR/logs"
+    mkdir -p "$LOG_DIR"
+    echo "[$timestamp] $agent: SENT - \"$message\"" >> "$LOG_DIR/send_log.txt"
 }
 
 # メッセージ送信
 send_message() {
     local target="$1"
     local message="$2"
-    
+
     echo "📤 送信中: $target ← '$message'"
-    
+
     # Claude Codeのプロンプトを一度クリア
     tmux send-keys -t "$target" C-c
     sleep 0.3
-    
+
     # メッセージ送信
     tmux send-keys -t "$target" "$message"
     sleep 0.1
-    
+
     # エンター押下
     tmux send-keys -t "$target" C-m
     sleep 0.5
@@ -84,12 +87,12 @@ send_message() {
 check_target() {
     local target="$1"
     local session_name="${target%%:*}"
-    
+
     if ! tmux has-session -t "$session_name" 2>/dev/null; then
         echo "❌ セッション '$session_name' が見つかりません"
         return 1
     fi
-    
+
     return 0
 }
 
@@ -99,45 +102,45 @@ main() {
         show_usage
         exit 1
     fi
-    
+
     # --listオプション
     if [[ "$1" == "--list" ]]; then
         show_agents
         exit 0
     fi
-    
+
     if [[ $# -lt 2 ]]; then
         show_usage
         exit 1
     fi
-    
+
     local agent_name="$1"
     local message="$2"
-    
+
     # エージェントターゲット取得
     local target
     target=$(get_agent_target "$agent_name")
-    
+
     if [[ -z "$target" ]]; then
         echo "❌ エラー: 不明なエージェント '$agent_name'"
         echo "利用可能エージェント: $0 --list"
         exit 1
     fi
-    
+
     # ターゲット確認
     if ! check_target "$target"; then
         exit 1
     fi
-    
+
     # メッセージ送信
     send_message "$target" "$message"
-    
+
     # ログ記録
     log_send "$agent_name" "$message"
-    
+
     echo "✅ 送信完了: $agent_name に '$message'"
-    
+
     return 0
 }
 
-main "$@" 
+main "$@"
