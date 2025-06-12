@@ -204,9 +204,8 @@ Claude-Code-Communication/
 ├── ST/                 # ST役割コンテキスト
 │   ├── CLAUDE.md      # ST専用指示書
 │   └── project/       # プロジェクトリンク（git除外対象）
-├── shared-projects/    # 実際のプロジェクトファイル
-│   └── demo-project/  # サンプルプロジェクト
-└── instructions/       # 従来の指示書（参考用）
+└── shared-projects/    # 実際のプロジェクトファイル
+    └── demo-project/  # サンプルプロジェクト
 ```
 
 ## 🔒 Git管理とセキュリティ

@@ -30,8 +30,7 @@ Claude-Code-Communication/
 ├── GM/                 # GM役割コンテキスト
 ├── TL/                 # TL役割コンテキスト  
 ├── ST/                 # ST役割コンテキスト
-├── shared-projects/    # 実際のプロジェクトファイル
-└── instructions/       # 従来の指示書（参考用）
+└── shared-projects/    # 実際のプロジェクトファイル
 ```
 
 ### セッション管理
