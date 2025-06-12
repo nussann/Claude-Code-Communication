@@ -1,6 +1,9 @@
 # プロジェクトディレクトリ（個人・テスト用プロジェクトを除外）
 */project/
 
+# 共有プロジェクト内の独立gitリポジトリを除外
+shared-projects/
+
 # ログファイル
 logs/
 *.log
@@ -23,4 +26,4 @@ Thumbs.db
 *.swo
 *~
 .vscode/
-.idea/ 
+.idea/
