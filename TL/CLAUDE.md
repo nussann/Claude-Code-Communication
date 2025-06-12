@@ -43,6 +43,7 @@ project_root/
 - **仮想環境必須**: `uv`を使用（`uv venv`でセットアップ）
 - **依存関係**: uvで管理（`uv pip install`、`uv pip compile`）
 - **命名規則**: 関数=snake_case、クラス=PascalCase、定数=UPPER_CASE
+- 並列処理を行うときはworktreeを適切に利用すること
 - **型ヒント使用**: 引数と戻り値に型を明記
 - **docstring必須**: 関数・クラスの説明を記載
 - **インラインコマンド禁止**: セキュリティのため
@@ -110,14 +111,14 @@ project_root/
 sleep 600 && {
     if [ ! -f ./tmp/st1_done.txt ] || [ ! -f ./tmp/st2_done.txt ] || [ ! -f ./tmp/st3_done.txt ]; then
         echo "品質チェック進捗確認を開始します..."
-        
+
         # 未完了のSTに品質重視の進捗確認
         [ ! -f ./tmp/st1_done.txt ] && ../system/agent-send.sh st1 "進捗確認です。現在の状況と品質チェック結果を共有してください。
         - 実装状況は？
         - テストは実行済み？
         - エラーや問題は発生していない？
         困っていることがあれば詳細を教えてください。"
-        
+
         [ ! -f ./tmp/st2_done.txt ] && ../system/agent-send.sh st2 "進捗確認です。現在の状況と品質チェック結果を共有してください。"
         [ ! -f ./tmp/st3_done.txt ] && ../system/agent-send.sh st3 "進捗確認です。現在の状況と品質チェック結果を共有してください。"
     fi
