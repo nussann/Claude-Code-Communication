@@ -1,52 +1,115 @@
-# Agent Communication System
+# Claude-Code-Communication システム
 
 ## エージェント構成
-- **PRESIDENT** (別セッション): 統括責任者
-- **boss1** (multiagent:0.0): チームリーダー
-- **worker1,2,3** (multiagent:0.1-3): 実行担当
+- **GM** (gmセッション): ジェネラルマネージャー・統括責任者
+- **TL** (team:0.0): チームリーダー・品質管理
+- **ST** (team:0.1-3): スタッフ・実装担当
 
 ## あなたの役割
-- **PRESIDENT**: @instructions/president.md
-- **boss1**: @instructions/boss.md
-- **worker1,2,3**: @instructions/worker.md
+- **GM**: @GM/CLAUDE.md
+- **TL**: @TL/CLAUDE.md
+- **ST**: @ST/CLAUDE.md
 
 ## メッセージ送信
 ```bash
-./agent-send.sh [相手] "[メッセージ]"
+./system/agent-send.sh [相手] "[メッセージ]"
 ```
 
 ## 基本フロー
-PRESIDENT → boss1 → workers → boss1 → PRESIDENT
+GM → TL → STs → TL → GM
 
-# コーディング方針
+## システム構造
 
-## 基本原則
-- **モジュール性重視**: 機能ごとにファイル分割、責務を明確に分離
-- **メインファイルは制御のみ**: ロジックはモジュール側に実装
-- **エラーハンドリング必須**: try-except使用、loggingでログ出力
-- **設定の外部化**: .envファイル使用、ハードコーディング禁止
-
-## ディレクトリ構造
+### ディレクトリ構成
 ```
-project_root/
-├── src/          # メインコード（models/, services/, utils/, config/）
-├── tests/        # テストコード
-├── docs/         # 要件定義書・設計書を参照すること
-├── scripts/      # ユーティリティスクリプト
-└── CHANGELOG.md  # 変更は必ず記録
+Claude-Code-Communication/
+├── system/              # システムファイル
+│   ├── setup.sh        # tmux環境セットアップ
+│   ├── agent-send.sh   # エージェント間通信
+│   └── setup-role.sh   # 役割管理
+├── GM/                 # GM役割コンテキスト
+├── TL/                 # TL役割コンテキスト  
+├── ST/                 # ST役割コンテキスト
+├── shared-projects/    # 実際のプロジェクトファイル
+└── instructions/       # 従来の指示書（参考用）
 ```
-※Referencesディレクトリには新規ファイルを作成しない
 
-## 開発ルール
-- **仮想環境必須**: `uv`を使用（`uv venv`でセットアップ）
-- **依存関係**: uvで管理（`uv pip install`、`uv pip compile`）
-- **命名規則**: 関数=snake_case、クラス=PascalCase、定数=UPPER_CASE
-- **型ヒント使用**: 引数と戻り値に型を明記
-- **docstring必須**: 関数・クラスの説明を記載
-- **インラインコマンド禁止**: セキュリティのため
-- **出力確認**: バックグラウンドターミナルで確認
+### セッション管理
+- **gmセッション**: 1ペイン (GM専用)
+- **teamセッション**: 4ペイン (TL + ST x3)
 
-## 重要
-- docs/の要件定義書とシステム設計書を必ず確認
-- 新機能は既存モジュールへの統合を優先検討
-- Don't hold back. Give it your all!
+## 開発原則
+
+### 品質重視
+- **バグゼロ**: 動作しないコードは価値がない
+- **テスト必須**: 実装と同時にテスト作成
+- **エラーハンドリング**: 例外処理の徹底実装
+- **コードレビュー**: 品質基準に基づく相互確認
+
+### モジュール設計
+- **責務分離**: 機能ごとにファイル分割
+- **再利用性**: 共通処理のモジュール化
+- **保守性**: 可読性と拡張性を重視
+- **設定外部化**: ハードコーディング禁止
+
+### 役割分担
+- **GM**: 全体統括・品質最終確認・方針決定
+- **TL**: チーム管理・タスク配分・進捗管理・品質管理
+- **ST**: 実装作業・単体テスト・品質確認
+
+## 通信プロトコル
+
+### エージェント識別子
+- `gm` : ジェネラルマネージャー
+- `tl` : チームリーダー
+- `st1`, `st2`, `st3` : スタッフ（ペイン別）
+- `st` : デフォルトスタッフ（st1に送信）
+
+### メッセージ形式
+```bash
+# 基本送信
+./system/agent-send.sh <target> "<message>"
+
+# 使用例
+./system/agent-send.sh gm "プロジェクト完了報告"
+./system/agent-send.sh tl "品質確認完了"
+./system/agent-send.sh st1 "実装作業完了"
+```
+
+## プロジェクト管理
+
+### シンボリックリンク方式
+- 実際のファイルは`shared-projects/`に保存
+- 各役割ディレクトリからシンボリックリンクで参照
+- ファイル重複なし・同期不要
+
+### 役割管理自動化
+```bash
+# 新しい役割作成
+./system/setup-role.sh create <役割名> <説明>
+
+# プロジェクトリンク
+./system/setup-role.sh link <役割名> <プロジェクト名>
+
+# プロジェクト作成
+./system/setup-role.sh create_project <プロジェクト名>
+```
+
+## 重要な注意事項
+
+### セキュリティ
+- 機密情報のハードコーディング禁止
+- 入力値の適切なバリデーション
+- シェルインジェクション対策
+
+### 互換性
+- 既存機能の動作保証
+- スクリプトの下位互換性維持
+- 段階的な機能拡張
+
+### ログ管理
+- 送信ログは`logs/send_log.txt`に記録
+- デバッグ情報の適切な出力
+- エラー発生時の詳細ログ
+
+Don't hold back. Give it your all!

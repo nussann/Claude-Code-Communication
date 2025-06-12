@@ -1,22 +1,22 @@
-# 🤖 Tmux Multi-Agent Communication Demo
+# 🤖 Claude-Code-Communication システム
 
-Agent同士がやり取りするtmux環境のデモシステム
+Claude Code多エージェント協調フレームワーク - 役割分担による効率的なプロジェクト開発環境
 
-## 🎯 デモ概要
+## 🎯 システム概要
 
-PRESIDENT → BOSS → Workers の階層型指示システムを体感できます
+GM → TL → STs の階層型役割管理システムで、複数のClaude Codeインスタンスが協調してプロジェクト開発を行います
 
 ### 👥 エージェント構成
 
 ```
-📊 PRESIDENT セッション (1ペイン)
-└── PRESIDENT: プロジェクト統括責任者
+📊 gm セッション (1ペイン)
+└── GM: ジェネラルマネージャー（プロジェクト統括責任者）
 
-📊 multiagent セッション (4ペイン)  
-├── boss1: チームリーダー
-├── worker1: 実行担当者A
-├── worker2: 実行担当者B
-└── worker3: 実行担当者C
+📊 team セッション (4ペイン)
+├── TL: チームリーダー（チーム統括・品質管理）
+├── ST: スタッフ（実装担当者A）
+├── ST: スタッフ（実装担当者B）
+└── ST: スタッフ（実装担当者C）
 ```
 
 ## 🚀 クイックスタート
@@ -30,82 +30,91 @@ cd Claude-Code-Communication
 
 ### 1. tmux環境構築
 
-⚠️ **注意**: 既存の `multiagent` と `president` セッションがある場合は自動的に削除されます。
+⚠️ **注意**: 既存の `team` と `gm` セッションがある場合は自動的に削除されます。
 
 ```bash
-./setup.sh
+./system/setup.sh
 ```
 
 ### 2. セッションアタッチ
 
 ```bash
-# マルチエージェント確認
-tmux attach-session -t multiagent
+# チーム確認
+tmux attach-session -t team
 
-# プレジデント確認（別ターミナルで）
-tmux attach-session -t president
+# GM確認（別ターミナルで）
+tmux attach-session -t gm
 ```
 
 ### 3. Claude Code起動
 
-**手順1: President認証**
+**手順1: GM認証**
 ```bash
-# まずPRESIDENTで認証を実施
-tmux send-keys -t president 'claude' C-m
+# まずGMで認証を実施
+tmux send-keys -t gm 'claude' C-m
+# Dangerous Skipモードでの実行
+tmux send-keys -t gm 'claude --dangerously-skip-permissions' C-m
 ```
 認証プロンプトに従って許可を与えてください。
 
-**手順2: Multiagent一括起動**
+**手順2: Team一括起動**
 ```bash
-# 認証完了後、multiagentセッションを一括起動
-for i in {0..3}; do tmux send-keys -t multiagent:0.$i 'claude' C-m; done
+# 認証完了後、teamセッションを一括起動
+for i in {0..3}; do tmux send-keys -t team:0.$i 'claude' C-m; done
+
+# Dangerous Skipモードでの実行
+for i in {0..3}; do tmux send-keys -t team:0.$i 'claude --dangerously-skip-permissions' C-m; done
 ```
 
-### 4. デモ実行
+### 4. システム実行
 
-PRESIDENTセッションで直接入力：
+GMセッションで直接入力：
 ```
-あなたはpresidentです。指示書に従って
+あなたはgmです。指示書に従って
 ```
 
-## 📜 指示書について
+## 📜 役割管理システム
 
-各エージェントの役割別指示書：
-- **PRESIDENT**: `instructions/president.md`
-- **boss1**: `instructions/boss.md` 
-- **worker1,2,3**: `instructions/worker.md`
+### 役割別CLAUDE.md
+- **GM**: `GM/CLAUDE.md` - プロジェクト統括責任者
+- **TL**: `TL/CLAUDE.md` - チームリーダー・品質管理
+- **ST**: `ST/CLAUDE.md` - スタッフ・実装担当
 
-**Claude Code参照**: `CLAUDE.md` でシステム構造を確認
+### システム構造
+- **シンボリックリンク方式**: プロジェクトファイルを各役割で共有
+- **コンテキスト最適化**: 役割固有の最小限指示のみ記載
+- **システムファイル分離**: `system/`ディレクトリで管理
+- **Git安全性**: `project/`ディレクトリは`.gitignore`で除外済み
 
-**要点:**
-- **PRESIDENT**: 「あなたはpresidentです。指示書に従って」→ boss1に指示送信
-- **boss1**: PRESIDENT指示受信 → workers全員に指示 → 完了報告
-- **workers**: Hello World実行 → 完了ファイル作成 → 最後の人が報告
+**動作フロー:**
+- **GM**: プロジェクト方針決定 → TLに指示送信
+- **TL**: GM指示受信 → STs全員に作業配分 → 品質管理・完了報告
+- **STs**: TL指示受信 → 実装作業 → 品質確認・完了報告
 
 ## 🎬 期待される動作フロー
 
 ```
-1. PRESIDENT → boss1: "あなたはboss1です。Hello World プロジェクト開始指示"
-2. boss1 → workers: "あなたはworker[1-3]です。Hello World 作業開始"  
-3. workers → ./tmp/ファイル作成 → 最後のworker → boss1: "全員作業完了しました"
-4. boss1 → PRESIDENT: "全員完了しました"
+1. GM → TL: "あなたはtlです。[プロジェクト名] 開始指示"
+2. TL → STs: "あなたはstです。[具体的な作業内容] 実装開始"
+3. STs → 実装作業 → 品質確認 → 最後のST → TL: "全員作業完了しました"
+4. TL → GM: "品質確認済み完了しました"
 ```
 
 ## 🔧 手動操作
 
-### agent-send.shを使った送信
+### system/agent-send.shを使った送信
 
 ```bash
 # 基本送信
-./agent-send.sh [エージェント名] [メッセージ]
+./system/agent-send.sh [エージェント名] [メッセージ]
 
 # 例
-./agent-send.sh boss1 "緊急タスクです"
-./agent-send.sh worker1 "作業完了しました"
-./agent-send.sh president "最終報告です"
+./system/agent-send.sh gm "プロジェクト開始指示"
+./system/agent-send.sh tl "品質確認完了"
+./system/agent-send.sh st1 "実装作業完了しました"
 
 # エージェント一覧確認
-./agent-send.sh --list
+./system/agent-send.sh --list
 ```
 
 ## 🧪 確認・デバッグ
@@ -117,10 +126,10 @@ PRESIDENTセッションで直接入力：
 cat logs/send_log.txt
 
 # 特定エージェントのログ
-grep "boss1" logs/send_log.txt
+grep "tl" logs/send_log.txt
 
 # 完了ファイル確認
-ls -la ./tmp/worker*_done.txt
+ls -la ./tmp/st*_done.txt
 ```
 
 ### セッション状態確認
@@ -130,24 +139,96 @@ ls -la ./tmp/worker*_done.txt
 tmux list-sessions
 
 # ペイン一覧
-tmux list-panes -t multiagent
-tmux list-panes -t president
+tmux list-panes -t team
+tmux list-panes -t gm
 ```
 
 ## 🔄 環境リセット
 
 ```bash
 # セッション削除
-tmux kill-session -t multiagent
-tmux kill-session -t president
+tmux kill-session -t team
+tmux kill-session -t gm
 
 # 完了ファイル削除
-rm -f ./tmp/worker*_done.txt
+rm -f ./tmp/st*_done.txt
 
 # 再構築（自動クリア付き）
-./setup.sh
+./system/setup.sh
 ```
 
 ---
 
-🚀 **Agent Communication を体感してください！** 🤖✨ 
+## 🔧 役割管理拡張
+
+### 新しいプロジェクトの作成（推奨）
+```bash
+# 新プロジェクト作成と全役割への自動リンク
+./system/setup-role.sh -n web-app-project
+./system/setup-role.sh -n my-awesome-project
+
+# スペースを含む場合は引用符を使用
+./system/setup-role.sh -n "my project with spaces"
+
+# 作成後のプロジェクトアクセス
+cd GM/project/web-app-project    # GMとして作業
+cd TL/project/web-app-project    # TLとして作業  
+cd ST/project/web-app-project    # STとして作業
+```
+
+### 手動での役割管理
+```bash
+# 新しい役割ディレクトリを作成
+./system/setup-role.sh create <役割名> <説明>
+
+# プロジェクトを役割にリンク
+./system/setup-role.sh link <役割名> <プロジェクト名>
+
+# 新しいプロジェクトを作成（リンクなし）
+./system/setup-role.sh create_project <プロジェクト名>
+```
+
+### ディレクトリ構造
+```
+Claude-Code-Communication/
+├── system/              # システムファイル
+│   ├── setup.sh        # tmux環境セットアップ
+│   ├── agent-send.sh   # エージェント間通信
+│   └── setup-role.sh   # 役割管理
+├── GM/                 # GM役割コンテキスト
+│   ├── CLAUDE.md      # GM専用指示書
+│   └── project/       # プロジェクトリンク（git除外対象）
+├── TL/                 # TL役割コンテキスト
+│   ├── CLAUDE.md      # TL専用指示書
+│   └── project/       # プロジェクトリンク（git除外対象）
+├── ST/                 # ST役割コンテキスト
+│   ├── CLAUDE.md      # ST専用指示書
+│   └── project/       # プロジェクトリンク（git除外対象）
+├── shared-projects/    # 実際のプロジェクトファイル
+│   └── demo-project/  # サンプルプロジェクト
+└── instructions/       # 従来の指示書（参考用）
+```
+
+## 🔒 Git管理とセキュリティ
+
+### プロジェクトファイルの管理方針
+- **共有対象**: `shared-projects/demo-project/` のみgit管理
+- **除外対象**: `*/project/` ディレクトリ（個人・テスト用プロジェクト）
+
+### .gitignoreの設定
+```gitignore
+# プロジェクトディレクトリ（個人・テスト用プロジェクトを除外）
+*/project/
+
+# Claude Code設定（ローカル設定のみ）
+.claude/settings.local.json
+```
+
+### 安全な開発フロー
+1. **テスト・開発**: `*/project/` 内で自由に実験
+2. **本格運用**: `shared-projects/` に正式プロジェクト作成
+3. **Git管理**: 必要なもののみコミット・プッシュ
+
+---
+
+🚀 **高効率マルチエージェント開発を体感してください！** 🤖✨

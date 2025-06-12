@@ -1,16 +1,24 @@
 {
   "permissions": {
     "allow": [
-      "Bash(./agent-send.sh:*)",
+      "Bash(ls:*)",
+      "Bash(./system/setup-role.sh:*)",
+      "Bash(./system/agent-send.sh:*)",
+      "Bash(./system/setup.sh:*)",
+      "Bash(rm:*)",
+      "Bash(find:*)",
       "Bash(mkdir:*)",
       "Bash(touch:*)",
       "Bash(echo:*)",
       "Bash(if:*)",
-      "Bash([ -f ./tmp/worker*_done.txt ]*)",
-      "Bash(*worker*_done.txt*)",
-      "Bash(mkdir:*)",
+      "Bash([ -f ./tmp/*_done.txt ]*)",
+      "Bash(*_done.txt*)",
       "Bash(then)",
-      "Bash(else)"
+      "Bash(else)",
+      "Bash(cd:*)",
+      "Bash(ln:*)",
+      "Bash(tmux:*)",
+      "WebFetch(domain:docs.anthropic.com)"
     ],
     "deny": []
   }

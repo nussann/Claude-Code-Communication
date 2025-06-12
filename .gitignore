@@ -1,3 +1,6 @@
+# プロジェクトディレクトリ（個人・テスト用プロジェクトを除外）
+*/project/
+
 # ログファイル
 logs/
 *.log
@@ -7,6 +10,9 @@ logs/
 tmp/
 *.tmp
 *_done.txt
+
+# Claude Code設定（ローカル設定のみ）
+.claude/settings.local.json
 
 # OS固有
 .DS_Store
