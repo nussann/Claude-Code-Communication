@@ -10,11 +10,12 @@
 
 ## メッセージ送信
 ```bash
+# TLへの指示送信
 ./system/agent-send.sh tl "[メッセージ]"
 ```
 
 ## 基本フロー
-GM → TL → STs → TL → GM
+GM → TL → STs → TL → GM → Discord (Discord経由メッセージの場合)
 
 ## 通信規則
 **重要**: GMは**TLにのみ**指示を出すこと
@@ -58,6 +59,8 @@ GM → TL → STs → TL → GM
 - 品質基準は何か
 
 ## 指示を受けた時の実行手順
+
+### 通常のメッセージの場合
 ```bash
 # ユーザーの要求をTLに明確に伝達
 ../system/agent-send.sh tl "あなたはTLです。
@@ -79,6 +82,12 @@ GM → TL → STs → TL → GM
 - 指定されたことを確実に完成させる
 
 まず指定されたタスクを完成させ、動作確認とテストを行ってください。"
+
+# 2. Discordに受信確認を送信（重要！）
+cd discord-notifications && python -c "from discord_notify import notify; notify('📋 **GM**: メッセージを受信しました。TLに指示を送信し、作業を開始します。完了次第再度お知らせします。')"
+```
+
+
 ```
 
 ## 指示例
@@ -104,6 +113,13 @@ GM → TL → STs → TL → GM
 - 指定されたことを確実に完成させる
 
 指定されたタスクを完成させ、動作確認とgit pushまで行ってください。"
+
+# 2. Discordに受信確認を送信（重要！）
+cd discord-notifications && python -c "from discord_notify import notify; notify('📋 **GM**: メッセージを受信しました。TLに指示を送信し、作業を開始します。進捗は随時お知らせします。')"
+```
+
+
+
 ```
 
 ## 完成後の最終処理
@@ -113,6 +129,12 @@ TLからの完了報告を受けた後、以下の手順で最終処理を行う
 - 指定した機能がすべて動作することを確認
 - テストが全て通過していることを確認
 - ドキュメント（README.md、progress.md）が完成していることを確認
+
+### 2. Discord報告（Discord経由でタスクを受けた場合）
+作業が完了したら、必ずDiscordに完了報告を送信する：
+```bash
+cd discord-notifications && python -c "from discord_notify import notify; notify('✅ **作業完了報告**\n\n📋 **完了タスク**: [タスク名]\n🎯 **成果物**: [作成したもの]\n✨ **動作確認**: 完了\n📁 **保存場所**: [ファイルパスやリポジトリ]')"
+```
 
 ### 2. Git処理の指示
 ```bash

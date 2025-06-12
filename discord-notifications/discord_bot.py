@@ -200,7 +200,16 @@ async def on_message(message):
         # 送信先エージェントを決定（メッセージに基づいて）
         target_agent = determine_target_agent(message.content)
 
-        full_message = f"{discord_info} {message.content}"
+        # GMに送信する場合は返信方法の指示を追加
+        if target_agent == 'gm':
+            full_message = f"""{discord_info} {message.content}
+
+【Discord返信方法】
+作業完了後は以下のコマンドでDiscordに報告してください：
+cd discord-notifications && python -c "from discord_notify import notify; notify('✅ **作業完了報告**\\n\\n📋 **完了タスク**: [タスク名]\\n🎯 **成果物**: [作成したもの]\\n✨ **動作確認**: 完了')"
+"""
+        else:
+            full_message = f"{discord_info} {message.content}"
 
         print(f"🔄 自動転送開始: {target_agent} <- '{message.content[:50]}...'")
 
@@ -323,7 +332,14 @@ async def gm_command(ctx, *, message):
     # Discord情報を付加（discriminator廃止対応）
     user_name = get_user_display_name(ctx.author)
     discord_info = f"[Discord: {user_name}]"
-    full_message = f"{discord_info} {message}"
+
+    # GMには返信方法の指示も含める
+    full_message = f"""{discord_info} {message}
+
+【Discord返信方法】
+作業完了後は以下のコマンドでDiscordに報告してください：
+cd discord-notifications && python -c "from discord_notify import notify; notify('✅ **作業完了報告**\\n\\n📋 **完了タスク**: [タスク名]\\n🎯 **成果物**: [作成したもの]\\n✨ **動作確認**: 完了')"
+"""
 
     print(f"📤 GMに送信予定のメッセージ: '{full_message}'")
     result = await cc_bot.send_to_agent('gm', full_message)
@@ -375,7 +391,12 @@ async def start_command(ctx, *, project_name):
 プロジェクト名: {project_name}
 
 このプロジェクトの開発を開始してください。
-TLに適切な指示を出し、チーム全体でプロジェクトを進行させてください。"""
+TLに適切な指示を出し、チーム全体でプロジェクトを進行させてください。
+
+【Discord返信方法】
+作業完了後は以下のコマンドでDiscordに報告してください：
+cd discord-notifications && python -c "from discord_notify import notify; notify('✅ **作業完了報告**\\n\\n📋 **完了タスク**: [タスク名]\\n🎯 **成果物**: [作成したもの]\\n✨ **動作確認**: 完了')"
+"""
 
     result = await cc_bot.send_to_agent('gm', gm_message)
     await ctx.send(f"🚀 プロジェクト '{project_name}' を開始しました！\n{result}")
@@ -395,7 +416,12 @@ async def project_command(ctx, *, description):
 プロジェクト説明: {description}
 
 このプロジェクトの詳細を検討し、適切な実装計画を立てて開発を開始してください。
-TLに具体的な作業指示を出し、チーム全体で効率的に進行させてください。"""
+TLに具体的な作業指示を出し、チーム全体で効率的に進行させてください。
+
+【Discord返信方法】
+作業完了後は以下のコマンドでDiscordに報告してください：
+cd discord-notifications && python -c "from discord_notify import notify; notify('✅ **作業完了報告**\\n\\n📋 **完了タスク**: [タスク名]\\n🎯 **成果物**: [作成したもの]\\n✨ **動作確認**: 完了')"
+"""
 
     result = await cc_bot.send_to_agent('gm', gm_message)
     await ctx.send(f"📁 新規プロジェクトを作成しました！\n{result}")
