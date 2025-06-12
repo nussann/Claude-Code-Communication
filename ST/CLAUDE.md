@@ -53,6 +53,8 @@ project_root/
 - docs/の要件定義書とシステム設計書を必ず確認
 - 新機能は既存モジュールへの統合を優先検討
 - Don't hold back. Give it your all!
+- 作業完了時は必ず即座に報告してください。完了報告は義務です。
+
 
 ## TLから指示を受けた時の実行フロー
 1. **要件の正確な理解**:
@@ -211,7 +213,7 @@ $(cat ./tmp/st${PANE_NUM}_progress.log | grep "完了")
 ../system/agent-send.sh tl "$COMPLETION_REPORT"
 ```
 
-**重要**: 
+**重要**:
 - STは自分の作業完了のみ報告し、他のSTの監視や統合報告は行わない
 - これらはTLの責務
 - **作業完了時は必ずTLに完了報告を行うこと（義務）**
