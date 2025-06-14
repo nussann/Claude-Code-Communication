@@ -18,7 +18,18 @@
       "Bash(cd:*)",
       "Bash(ln:*)",
       "Bash(tmux:*)",
-      "WebFetch(domain:docs.anthropic.com)"
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(mv:*)",
+      "Bash(chmod:*)",
+      "Bash(cp:*)",
+      "Bash(cat:*)",
+      "Bash(git pull:*)",
+      "Bash(grep:*)",
+      "Bash(sed:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": []
   }
