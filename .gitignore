@@ -2,7 +2,7 @@
 */project/
 
 # 共有プロジェクト内の独立gitリポジトリを除外(ここの部分はどんなことがあっても絶対に変更しないこと)
-shared-projects/
+# shared-projects/
 
 # 環境変数ファイル
 .env
