@@ -4,15 +4,34 @@ Claude Code多エージェント協調フレームワーク - 役割分担によ
 
 ## 🚀 クイックスタート
 
+### 🎯 簡単起動（Makefile）
 ```bash
 # 1. 環境設定
 cp .env.example .env
 # .envファイルを編集してAPI Keyを設定
 
-# 2. システム起動（Discord Bot統合）
+# 2. ワンコマンド完全起動（推奨）
+make all         # 起動→表示まで全自動
+
+# または段階的実行
+make auto-start  # システム初期化 + 全Claude起動
+make vscode-attach # VS Code専用セッション表示
+```
+
+### 📋 その他のMakeコマンド
+```bash
+make help        # 使用可能コマンド表示
+make status      # システム状態確認
+make monitor     # リアルタイム監視
+make clean       # セッション削除
+```
+
+### 🤖 従来の手動起動
+```bash
+# 1. システム起動（Discord Bot統合）
 ./system/setup.sh
 
-# 3. Discord操作
+# 2. Discord操作
 # Discordで「!cc cchelp」または直接メッセージ送信
 ```
 
@@ -44,6 +63,8 @@ git clone https://github.com/nishimoto265/Claude-Code-Communication.git
 cd Claude-Code-Communication
 ```
 
+### 🔧 手動起動（詳細制御）
+
 ### 1. tmux環境構築
 
 ⚠️ **注意**: 既存の `team` と `gm` セッションがある場合は自動的に削除されます。
@@ -57,28 +78,32 @@ cd Claude-Code-Communication
 ```bash
 # チーム確認
 tmux attach-session -t team
+# または
+make attach-team
 
 # GM確認（別ターミナルで）
 tmux attach-session -t gm
+# または
+make attach-gm
 ```
 
 ### 3. Claude Code起動
 
 **手順1: GM認証**
 ```bash
-# まずGMで認証を実施
-tmux send-keys -t gm 'claude' C-m
-# Dangerous Skipモードでの実行
+# Makefileでの実行
+make activate-gm
+
+# 手動実行
 tmux send-keys -t gm 'claude --dangerously-skip-permissions' C-m
 ```
-認証プロンプトに従って許可を与えてください。
 
 **手順2: Team一括起動**
 ```bash
-# 認証完了後、teamセッションを一括起動
-for i in {0..3}; do tmux send-keys -t team:0.$i 'claude' C-m; done
+# Makefileでの実行
+make activate-team
 
-# Dangerous Skipモードでの実行
+# 手動実行
 for i in {0..3}; do tmux send-keys -t team:0.$i 'claude --dangerously-skip-permissions' C-m; done
 ```
 

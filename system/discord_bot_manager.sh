@@ -99,7 +99,7 @@ case "$1" in
             OLD_PID=$(cat "$PID_FILE")
             if kill -0 "$OLD_PID" 2>/dev/null; then
                 echo "⚠️ Discord Bot は既に動作中です (PID: $OLD_PID)"
-                exit 1
+                exit 0
             else
                 rm -f "$PID_FILE"
             fi

@@ -81,9 +81,37 @@ Claude-Code-Communication/
 ```
 
 ## 重要な注意事項
-### ログ管理
-- 送信ログは`logs/send_log.txt`に記録
-- デバッグ情報の適切な出力
-- エラー発生時の詳細ログ
 
-Don't hold back. Give it your all!
+## システム起動管理（Makefile）
+
+### 基本的な起動フロー
+```bash
+# 1. システム初期化
+make start
+
+# 2. 別ターミナルでアタッチ
+make attach-team  # teamセッション
+make attach-gm    # gmセッション
+
+# 3. Claude起動
+make activate-gm   # GM Claude起動
+make activate-team # Team全Claude起動
+```
+
+### 自動化オプション
+```bash
+# GM起動まで自動実行
+make start-a
+
+# Team全Claude起動（start-a実行後）
+make start-b
+```
+
+### 管理コマンド
+```bash
+make status    # セッション状態確認
+make clean     # セッション削除
+make help      # ヘルプ表示
+```
+
+### ログ管理
