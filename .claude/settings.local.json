@@ -30,7 +30,8 @@
       "Bash(grep:*)",
       "Bash(sed:*)",
       "Bash(git checkout:*)",
-      "WebFetch(domain:x.com)"
+      "WebFetch(domain:x.com)",
+      "Bash(make:*)"
     ],
     "deny": []
   }

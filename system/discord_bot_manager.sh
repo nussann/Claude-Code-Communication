@@ -26,29 +26,28 @@ setup_venv() {
 
     cd "$DISCORD_DIR"
 
-    # Python3の存在確認
-    if ! command -v python3 &> /dev/null; then
-        log_error "Python3がインストールされていません"
+    # uvの存在確認
+    if ! command -v uv &> /dev/null; then
+        log_error "uvがインストールされていません。uvをインストールしてください。"
+        log_info "インストール方法: curl -LsSf https://astral.sh/uv/install.sh | sh"
         return 1
     fi
 
-    # 仮想環境作成
-    if [ ! -d "venv" ]; then
-        log_info "仮想環境作成中..."
-        python3 -m venv venv
+    # 仮想環境作成（uvを使用）
+    if [ ! -d ".venv" ]; then
+        log_info "uv仮想環境作成中..."
+        uv venv
         if [ $? -ne 0 ]; then
             log_error "仮想環境の作成に失敗しました"
             return 1
         fi
-        log_success "仮想環境作成完了"
+        log_success "uv仮想環境作成完了"
     fi
 
     # 依存関係インストール
     if [ -f "requirements.txt" ]; then
         log_info "依存関係インストール中..."
-        source venv/bin/activate
-        pip install --upgrade pip
-        pip install -r requirements.txt
+        uv pip install -r requirements.txt
         if [ $? -eq 0 ]; then
             log_success "依存関係インストール完了"
         else
@@ -85,7 +84,7 @@ case "$1" in
         cd "$DISCORD_DIR"
 
         # 仮想環境確認・セットアップ
-        if [ ! -d "venv" ] || [ ! -f "venv/bin/activate" ]; then
+        if [ ! -d ".venv" ] || [ ! -f ".venv/bin/activate" ]; then
             log_info "仮想環境が見つかりません。セットアップします..."
             setup_venv
             if [ $? -ne 0 ]; then
@@ -106,7 +105,7 @@ case "$1" in
         fi
 
         # 起動
-        source venv/bin/activate
+        source .venv/bin/activate
         python discord_bot.py &
         echo $! > "$PID_FILE"
 
