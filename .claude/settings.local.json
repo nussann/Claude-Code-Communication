@@ -31,7 +31,21 @@
       "Bash(sed:*)",
       "Bash(git checkout:*)",
       "WebFetch(domain:x.com)",
-      "Bash(make:*)"
+      "Bash(make:*)",
+      "Bash(python:*)",
+      "Bash(pip install:*)",
+      "Bash(source:*)",
+      "Bash(. .venv/bin/activate)",
+      "Bash(.venv/bin/pip install:*)",
+      "Bash(uv pip install:*)",
+      "Bash(playwright install)",
+      "Bash(pgrep:*)",
+      "Bash(curl:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(pkill:*)",
+      "Bash(kill:*)",
+      "Bash(claude mcp:*)"
     ],
     "deny": []
   }
